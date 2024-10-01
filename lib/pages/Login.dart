@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 170),
+              const SizedBox(height: 100),
               // Turtle image
               Image.asset(
                 'assets/image/logo.png',
