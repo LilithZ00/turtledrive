@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Registeruser extends StatefulWidget {
   const Registeruser({super.key});
@@ -8,6 +10,18 @@ class Registeruser extends StatefulWidget {
 }
 
 class _RegisteruserState extends State<Registeruser> {
+  File? _image;
+
+  // Function to pick image from gallery or camera
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await ImagePicker().pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,13 +44,65 @@ class _RegisteruserState extends State<Registeruser> {
               ),
             ),
           ),
-
           // Form fields
           SingleChildScrollView(
             padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                const SizedBox(height: 0),
+                // Profile Image Selection
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SafeArea(
+                            child: Wrap(
+                              children: <Widget>[
+                                ListTile(
+                                  leading: const Icon(Icons.photo_library),
+                                  title: const Text('Choose from gallery'),
+                                  onTap: () {
+                                    _pickImage(ImageSource.gallery);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                ListTile(
+                                  leading: const Icon(Icons.camera_alt),
+                                  title: const Text('Take a picture'),
+                                  onTap: () {
+                                    _pickImage(ImageSource.camera);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: CircleAvatar(
+                      radius: 60,
+                      backgroundColor: const Color.fromARGB(255, 173, 173, 173),
+                      child: _image != null
+                          ? ClipOval(
+                              child: Image.file(
+                                _image!,
+                                width: 120,
+                                height: 120,
+                                fit: BoxFit.cover,
+                              ),
+                            )
+                          : const Icon(
+                              Icons.camera_alt,
+                              size: 50,
+                              color: Colors.white,
+                            ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 // Username field
                 const Text('Username'),
